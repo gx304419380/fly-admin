@@ -54,6 +54,7 @@ public class AccountService {
     public UserInfo login(LoginDto dto) {
         String username = dto.getUsername();
         String password = getPassword(dto);
+        Assert.isTrue(password.length() >= 6 && password.length() <= 20, PASSWORD_SIZE_ERROR);
 
         AccountQuery query = accountMapper.query().where()
                 .username().eq(username)
@@ -88,6 +89,7 @@ public class AccountService {
     public void register(RegisterDto dto) {
         String username = dto.getUsername();
         String password = getPassword(dto);
+        Assert.isTrue(password.length() >= 6 && password.length() <= 20, PASSWORD_SIZE_ERROR);
 
         String salt = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();

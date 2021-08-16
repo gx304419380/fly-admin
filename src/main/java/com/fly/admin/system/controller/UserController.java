@@ -2,10 +2,14 @@ package com.fly.admin.system.controller;
 
 import cn.org.atool.fluent.mybatis.If;
 import com.fly.admin.common.dto.Res;
+import com.fly.admin.common.dto.UserInfo;
+import com.fly.admin.common.util.UserUtils;
+import com.fly.admin.system.dto.UserDto;
 import com.fly.admin.system.entity.User;
 import com.fly.admin.system.mapper.UserMapper;
 import com.fly.admin.system.mapper.UserXmlMapper;
 import com.fly.admin.system.wrapper.UserQuery;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -30,20 +34,20 @@ public class UserController {
     @Resource
     private UserXmlMapper userXmlMapper;
 
-    @GetMapping("{id}")
-    public Res<User> getById(@PathVariable String id, @RequestParam String name) {
 
-        userMapper.deleteById();
 
-        UserQuery query = userMapper.query()
-                .select.userId().end()
-                .where()
-                .name().like(name, StringUtils::hasText)
-                .userId().eq(id, If::notBlank)
-                .end();
-        User one = userMapper.findOne(query);
+    @GetMapping
+    @ApiOperation("获取用户信息")
+    public Res<UserInfo> getUserInfo() {
+        UserInfo userInfo = UserUtils.getUserInfo();
+        return Res.ok(userInfo);
+    }
 
-        return Res.ok(one);
+    @PostMapping
+    @ApiOperation("新增、修改用户")
+    public Res<Object> saveUser(@RequestBody UserDto userDto) {
+
+        return Res.ok();
     }
 
 

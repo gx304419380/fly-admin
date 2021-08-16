@@ -8,10 +8,13 @@ import com.fly.admin.common.dto.UserInfo;
 import com.fly.admin.system.service.AccountService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
+import static com.fly.admin.common.constant.CommonConstant.DEV;
 
 /**
  * 账号登录登出注册
@@ -57,6 +60,18 @@ public class AccountController {
 
         log.info("- user login finish");
         return Res.ok(user);
+    }
+
+
+    @PostMapping("loginForTest")
+    @ApiOperation("用于自测获取token")
+    public String loginForTest(@Validated LoginDto dto) {
+        log.info("- user login: {}", dto);
+
+        UserInfo user = accountService.login(dto);
+
+        log.info("- user login finish");
+        return user.getToken();
     }
 
 

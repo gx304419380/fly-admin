@@ -28,6 +28,7 @@ public class TokenFilter implements Filter {
 
     private static final String SWAGGER = "/swagger";
     private static final String SWAGGER_JSON = "/v3/api-docs";
+    private static final String ACCOUNT = "/account";
 
     @Resource
     private ObjectMapper objectMapper;
@@ -46,9 +47,9 @@ public class TokenFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        //放行swagger
+        //白名单
         String uri = httpRequest.getRequestURI();
-        if (uri.startsWith(SWAGGER) || uri.startsWith(SWAGGER_JSON)) {
+        if (whiteList(uri)) {
             chain.doFilter(request, response);
             return;
         }
@@ -75,6 +76,16 @@ public class TokenFilter implements Filter {
             UserUtils.remove();
         }
 
+    }
+
+    /**
+     * 白名单校验
+     *
+     * @param uri   url
+     * @return      是否为白名单
+     */
+    private boolean whiteList(String uri) {
+        return uri.startsWith(SWAGGER) || uri.startsWith(SWAGGER_JSON) || uri.startsWith(ACCOUNT);
     }
 
 

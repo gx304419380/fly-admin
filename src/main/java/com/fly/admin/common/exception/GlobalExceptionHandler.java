@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,8 +26,8 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Res<String> handleException(MethodArgumentNotValidException e) {
+    @ExceptionHandler(BindException.class)
+    public Res<String> handleException(BindException e) {
         log.error("参数验证错误", e);
         String message = e.getBindingResult()
                 .getAllErrors()
@@ -53,6 +54,7 @@ public class GlobalExceptionHandler {
         log.error("不合法的参数异常", e);
         return Res.fail(e.getMessage());
     }
+
 
 
     @ExceptionHandler(Exception.class)
