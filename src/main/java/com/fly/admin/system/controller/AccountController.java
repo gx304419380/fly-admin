@@ -3,18 +3,15 @@ package com.fly.admin.system.controller;
 import com.fly.admin.common.dto.Res;
 import com.fly.admin.common.util.KeyUtils;
 import com.fly.admin.system.dto.LoginDto;
+import com.fly.admin.system.dto.RegisterDto;
+import com.fly.admin.common.dto.UserInfo;
 import com.fly.admin.system.service.AccountService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.security.KeyPairGenerator;
-
-import static com.fly.admin.common.constant.SystemErrorMessage.KEY_NOT_EXISTS_ERROR;
-import static com.fly.admin.common.constant.SystemErrorMessage.LOGIN_ERROR;
 
 /**
  * 账号登录登出注册
@@ -24,7 +21,7 @@ import static com.fly.admin.common.constant.SystemErrorMessage.LOGIN_ERROR;
  * @since 2021/8/13
  */
 @RestController
-@RequestMapping("login")
+@RequestMapping("account")
 @Slf4j
 public class AccountController {
 
@@ -38,19 +35,39 @@ public class AccountController {
         return Res.ok(publicKey);
     }
 
-    @PostMapping
+
+    @PostMapping("register")
+    @ApiOperation("注册用户名密码")
+    public Res<String> register(@Validated @RequestBody RegisterDto dto) {
+        log.info("- register user: {}", dto);
+
+        accountService.register(dto);
+
+        log.info("register success");
+        return Res.ok();
+    }
+
+
+    @PostMapping("login")
     @ApiOperation("登录校验并返回token")
-    public Res<String> login(@Validated @RequestBody LoginDto dto) {
+    public Res<UserInfo> login(@Validated @RequestBody LoginDto dto) {
         log.info("- user login: {}", dto);
-        String key = KeyUtils.getPrivateKey(dto.getPublicKey());
 
-        Assert.hasText(key, KEY_NOT_EXISTS_ERROR);
-        String password = KeyUtils.decrypt(dto.getPassword(), key);
-
-        Boolean validate = accountService.validate(dto.getUsername(), password);
-        Assert.isTrue(validate, LOGIN_ERROR);
+        UserInfo user = accountService.login(dto);
 
         log.info("- user login finish");
+        return Res.ok(user);
+    }
+
+
+    @PostMapping("logout")
+    @ApiOperation("登出")
+    public Res<UserInfo> logout(@RequestHeader String token) {
+        log.info("- user logout: {}", token);
+
+        accountService.logout(token);
+
+        log.info("- user logout finish");
         return Res.ok();
     }
 

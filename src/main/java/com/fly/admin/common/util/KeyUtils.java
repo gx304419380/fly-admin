@@ -14,9 +14,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.fly.admin.common.constant.SystemErrorMessage.DECODE_ERROR;
 
@@ -31,7 +28,6 @@ public class KeyUtils {
     private static final KeyPairGenerator GENERATOR;
     private static final Base64.Encoder ENCODER = Base64.getEncoder();
     private static final Base64.Decoder DECODER = Base64.getDecoder();
-    private static final Map<String, String> KEY_MAP = new ConcurrentHashMap<>();
     public static final String RSA = "RSA";
 
     static {
@@ -57,7 +53,7 @@ public class KeyUtils {
         String privateKeyString = ENCODER.encodeToString(privateKey.getEncoded());
         String publicKeyString = ENCODER.encodeToString(publicKey.getEncoded());
 
-        cache(publicKeyString, privateKeyString);
+        CacheUtils.put(publicKeyString, privateKeyString);
         return publicKeyString;
     }
 
@@ -69,8 +65,8 @@ public class KeyUtils {
      * @return 私钥
      */
     public static String getPrivateKey(String publicKey) {
-        String key = getFromCache(publicKey);
-        removeFromCache(publicKey);
+        String key = CacheUtils.get(publicKey, String.class);
+        CacheUtils.remove(publicKey);
         return key;
     }
 
@@ -122,26 +118,4 @@ public class KeyUtils {
         return ENCODER.encodeToString(cipher.doFinal(str.getBytes()));
     }
 
-
-    /**
-     * 缓存密钥对
-     *
-     * @param publicKey  公钥
-     * @param privateKey 私钥
-     */
-    private static void cache(String publicKey, String privateKey) {
-        // TODO: 2021/8/13 换成redis
-        KEY_MAP.put(publicKey, privateKey);
-    }
-
-
-    private static void removeFromCache(String publicKey) {
-        // TODO: 2021/8/13 换成redis
-        KEY_MAP.remove(publicKey);
-    }
-
-    private static String getFromCache(String publicKey) {
-        // TODO: 2021/8/13 换成redis
-        return KEY_MAP.get(publicKey);
-    }
 }

@@ -33,7 +33,7 @@ public class Res<T> {
     }
 
     public static <T> Res<T> fail(String msg) {
-        return new Res<>(SUCCESS, msg, null);
+        return new Res<>(FAIL, msg, null);
     }
 
 }

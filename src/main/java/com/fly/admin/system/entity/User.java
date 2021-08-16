@@ -1,11 +1,13 @@
 package com.fly.admin.system.entity;
 
 import cn.org.atool.fluent.mybatis.annotation.FluentMybatis;
+import cn.org.atool.fluent.mybatis.annotation.TableField;
 import cn.org.atool.fluent.mybatis.annotation.TableId;
 import cn.org.atool.fluent.mybatis.base.IEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -31,9 +33,16 @@ public class User implements IEntity {
 
     private String description;
 
+    @TableField(insert = "now()")
     private LocalDateTime createTime;
 
+    @TableField(insert = "now()", update = "now()")
     private LocalDateTime updateTime;
 
     private Integer deleted;
+
+    @Override
+    public Serializable findPk() {
+        return userId;
+    }
 }
