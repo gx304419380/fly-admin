@@ -4,11 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
-import static com.fly.admin.common.constant.SystemErrorMessage.*;
-
 /**
  * @author guoxiang
  * @version 1.0.0

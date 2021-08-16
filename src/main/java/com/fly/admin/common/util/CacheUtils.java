@@ -48,13 +48,13 @@ public class CacheUtils {
         CACHE.invalidate(key);
     }
 
-    public static Object get(String key) {
+    public static Object getObject(String key) {
         return CACHE.getIfPresent(key);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T get(String key, Class<T> type) {
-        Object value = get(key);
+    public static <T> T get(String key) {
+        Object value = getObject(key);
         if (value == null) {
             return null;
         }

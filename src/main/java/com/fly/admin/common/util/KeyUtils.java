@@ -4,13 +4,14 @@ import com.fly.admin.common.exception.BaseException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -65,7 +66,7 @@ public class KeyUtils {
      * @return 私钥
      */
     public static String getPrivateKey(String publicKey) {
-        String key = CacheUtils.get(publicKey, String.class);
+        String key = CacheUtils.get(publicKey);
         CacheUtils.remove(publicKey);
         return key;
     }
@@ -87,7 +88,8 @@ public class KeyUtils {
     }
 
 
-    public static String doDecrypt(String str, String privateKey) throws Exception {
+    public static String doDecrypt(String str, String privateKey)
+            throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         //64位解码加密后的字符串
         byte[] inputByte = DECODER.decode(str);
         //base64编码的私钥
@@ -106,9 +108,9 @@ public class KeyUtils {
      * @param str       加密字符串
      * @param publicKey 公钥
      * @return 密文
-     * @throws Exception 加密过程中的异常信息
      */
-    public static String encrypt(String str, String publicKey) throws Exception {
+    public static String encrypt(String str, String publicKey)
+            throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         //base64编码的公钥
         byte[] decoded = DECODER.decode(publicKey);
         RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance(RSA).generatePublic(new X509EncodedKeySpec(decoded));

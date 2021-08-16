@@ -16,8 +16,8 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 public class Res<T> {
 
-    public static final Integer SUCCESS = 0;
-    public static final Integer FAIL = 1;
+    public static final Integer SUCCESS_CODE = 0;
+    public static final Integer FAIL_CODE = 1;
 
     private Integer code;
     private String msg;
@@ -25,15 +25,15 @@ public class Res<T> {
 
 
     public static <T> Res<T> ok(T data) {
-        return new Res<>(SUCCESS, null, data);
+        return new Res<>(SUCCESS_CODE, null, data);
     }
 
     public static <T> Res<T> ok() {
-        return new Res<>(SUCCESS, null, null);
+        return new Res<>(SUCCESS_CODE, null, null);
     }
 
     public static <T> Res<T> fail(String msg) {
-        return new Res<>(FAIL, msg, null);
+        return new Res<>(FAIL_CODE, msg, null);
     }
 
 }

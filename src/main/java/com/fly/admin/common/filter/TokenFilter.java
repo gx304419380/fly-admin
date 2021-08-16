@@ -62,7 +62,7 @@ public class TokenFilter implements Filter {
         }
 
         //校验用户信息
-        UserInfo user = CacheUtils.get(token, UserInfo.class);
+        UserInfo user = CacheUtils.get(token);
         if (user == null) {
             setResponse(httpResponse, "token已失效");
             return;

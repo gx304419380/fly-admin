@@ -1,6 +1,5 @@
 package com.fly.admin.system.controller;
 
-import cn.org.atool.fluent.mybatis.If;
 import com.fly.admin.common.dto.Res;
 import com.fly.admin.common.dto.UserInfo;
 import com.fly.admin.common.util.UserUtils;
@@ -8,10 +7,8 @@ import com.fly.admin.system.dto.UserDto;
 import com.fly.admin.system.entity.User;
 import com.fly.admin.system.mapper.UserMapper;
 import com.fly.admin.system.mapper.UserXmlMapper;
-import com.fly.admin.system.wrapper.UserQuery;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
