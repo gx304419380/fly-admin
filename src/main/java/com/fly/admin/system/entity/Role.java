@@ -5,7 +5,6 @@ import cn.org.atool.fluent.mybatis.annotation.TableField;
 import cn.org.atool.fluent.mybatis.annotation.TableId;
 import cn.org.atool.fluent.mybatis.base.IEntity;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -14,31 +13,27 @@ import java.time.LocalDateTime;
 /**
  * @author guoxiang
  * @version 1.0.0
- * @since 2021/8/12
+ * @since 2021/8/17
  */
 @Data
 @Accessors(chain = true)
-@FluentMybatis(table = "tb_user")
-@NoArgsConstructor
-public class User implements IEntity {
+@FluentMybatis(table = "tb_role")
+public class Role implements IEntity {
 
     @TableId(auto = false)
-    private String userId;
+    private String id;
 
     private String name;
 
-    private String nickName;
-
-    private String phone;
-
-    private String email;
+    private String code;
 
     private String description;
 
+
     /**
-     * 所属组织id
+     * 扩展json
      */
-    private String groupId;
+    private String extension;
 
     @TableField(insert = "now()")
     private LocalDateTime createTime;
@@ -50,11 +45,7 @@ public class User implements IEntity {
 
     @Override
     public Serializable findPk() {
-        return userId;
+        return id;
     }
 
-    public User(String userId, String name) {
-        this.userId = userId;
-        this.name = name;
-    }
 }

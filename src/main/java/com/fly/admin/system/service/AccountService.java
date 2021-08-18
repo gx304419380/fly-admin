@@ -1,16 +1,18 @@
 package com.fly.admin.system.service;
 
+import com.fly.admin.common.dto.UserInfo;
 import com.fly.admin.common.exception.BaseException;
 import com.fly.admin.common.util.CacheUtils;
 import com.fly.admin.common.util.KeyUtils;
 import com.fly.admin.system.dto.LoginDto;
 import com.fly.admin.system.dto.RegisterDto;
-import com.fly.admin.common.dto.UserInfo;
 import com.fly.admin.system.entity.Account;
-import com.fly.admin.system.entity.User;
+import com.fly.admin.system.event.AccountLoginEvent;
+import com.fly.admin.system.event.AccountRegisterEvent;
 import com.fly.admin.system.mapper.AccountMapper;
 import com.fly.admin.system.wrapper.AccountQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
-
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.fly.admin.common.constant.CommonConstant.DEV;
-import static com.fly.admin.common.constant.CommonConstant.NOT_DELETED;
+import static com.fly.admin.common.constant.CommonConstant.*;
 import static com.fly.admin.common.constant.SystemErrorMessage.*;
 
 /**
@@ -40,7 +40,7 @@ public class AccountService {
     private AccountMapper accountMapper;
 
     @Resource
-    private UserService userService;
+    private ApplicationEventPublisher publisher;
 
     @Resource
     private Environment environment;
@@ -51,7 +51,7 @@ public class AccountService {
      * @param dto       dto
      * @return          是否正确
      */
-    public UserInfo login(LoginDto dto) {
+    public String login(LoginDto dto) {
         String username = dto.getUsername();
         String password = getPassword(dto);
         Assert.isTrue(password.length() >= 6 && password.length() <= 20, PASSWORD_SIZE_ERROR);
@@ -72,11 +72,11 @@ public class AccountService {
 
         //生成token，保存用户信息
         String token = UUID.randomUUID().toString();
-        User user = userService.getById(account.getUserId());
-        UserInfo userInfo = new UserInfo(user, token, username);
 
-        CacheUtils.put(token, userInfo);
-        return userInfo;
+        //发射用户登录事件
+        publisher.publishEvent(new AccountLoginEvent(token, account.getUserId(), username));
+
+        return token;
     }
 
 
@@ -89,20 +89,9 @@ public class AccountService {
     public void register(RegisterDto dto) {
         String username = dto.getUsername();
         String password = getPassword(dto);
-        Assert.isTrue(password.length() >= 6 && password.length() <= 20, PASSWORD_SIZE_ERROR);
-
-        String salt = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();
-        String passwordAndSalt = password + salt;
-        String md5 = DigestUtils.md5DigestAsHex(passwordAndSalt.getBytes());
+        Account account = generateAccount(userId, username, password);
 
-        //保存账户信息
-        Account account = new Account();
-
-        account.setUsername(username)
-                .setSalt(salt)
-                .setPassword(md5)
-                .setUserId(userId);
         try {
             accountMapper.save(account);
         } catch (DuplicateKeyException e) {
@@ -110,11 +99,7 @@ public class AccountService {
         }
 
         //生成关联用户
-        User user = new User()
-                .setUserId(userId)
-                .setName(username);
-
-        userService.save(user);
+        publisher.publishEvent(new AccountRegisterEvent(userId, username));
     }
 
 
@@ -122,7 +107,14 @@ public class AccountService {
      * 登出
      */
     public void logout(String token) {
-        CacheUtils.remove(token);
+        UserInfo user = CacheUtils.get(TOKEN_CACHE + token);
+
+        if (user == null) {
+            return;
+        }
+
+        CacheUtils.remove(TOKEN_CACHE + token);
+        CacheUtils.remove(USER_ID_CACHE + user.getUserId());
     }
 
 
@@ -149,6 +141,29 @@ public class AccountService {
 
 
     /**
+     * 保存或新增账户
+     *
+     * @param userId    userId
+     * @param username  username
+     * @param password  password
+     */
+    public Account generateAccount(String userId, String username, String password) {
+        Assert.isTrue(password.length() >= 6 && password.length() <= 20, PASSWORD_SIZE_ERROR);
+
+        String salt = UUID.randomUUID().toString();
+        String passwordAndSalt = password + salt;
+        String md5 = DigestUtils.md5DigestAsHex(passwordAndSalt.getBytes());
+
+        //保存账户信息
+        Account account = new Account();
+
+       return account.setUsername(username)
+                .setSalt(salt)
+                .setPassword(md5)
+                .setUserId(userId);
+    }
+
+    /**
      * 根据用户名查询
      *
      * @param username  username
@@ -163,4 +178,22 @@ public class AccountService {
         return accountMapper.findOne(query);
     }
 
+    /**
+     * 更新账号密码
+     *
+     * @param account   account
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAccount(Account account) {
+        accountMapper.updateById(account);
+    }
+
+    /**
+     * 新增账户
+     *
+     * @param account   account
+     */
+    public void saveAccount(Account account) {
+        accountMapper.save(account);
+    }
 }

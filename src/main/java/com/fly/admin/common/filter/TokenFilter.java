@@ -15,7 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static com.fly.admin.common.constant.CommonConstant.TOKEN_HEADER;
+import static com.fly.admin.common.constant.CommonConstant.TOKEN;
+import static com.fly.admin.common.constant.CommonConstant.TOKEN_CACHE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -55,14 +56,14 @@ public class TokenFilter implements Filter {
         }
 
         //校验token
-        String token = httpRequest.getHeader(TOKEN_HEADER);
+        String token = httpRequest.getHeader(TOKEN);
         if (StringUtils.isEmpty(token)) {
             setResponse(httpResponse, "请求头无token");
             return;
         }
 
         //校验用户信息
-        UserInfo user = CacheUtils.get(token);
+        UserInfo user = CacheUtils.get(TOKEN_CACHE + token);
         if (user == null) {
             setResponse(httpResponse, "token已失效");
             return;

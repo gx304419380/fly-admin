@@ -14,7 +14,14 @@ public class CommonConstant {
     public static final Integer NOT_DELETED = 0;
 
     public static final String DEV = "dev";
-    public static final String TOKEN_HEADER = "token";
+    public static final String TOKEN = "token";
+    public static final String TOKEN_CACHE = "token:";
+    public static final String USER_ID_CACHE = "userId:";
 
 
+    public static final String PATH_JOIN = "/";
+    public static final String ROOT = "root_org";
+
+    public static final Integer HAS_PERMISSION = 1;
+    public static final Integer NO_PERMISSION = 0;
 }

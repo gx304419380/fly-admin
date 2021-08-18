@@ -1,8 +1,12 @@
 package com.fly.admin.system.controller;
 
+import com.fly.admin.system.service.MenuService;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * @author guoxiang
@@ -10,7 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2021/8/13
  */
 @RestController
-@RequestMapping("permission")
+@RequestMapping("menu")
 @Slf4j
-public class PermissionController {
+@Api(tags = "菜单权限")
+public class MenuController {
+
+    @Resource
+    private MenuService menuService;
+
+
 }

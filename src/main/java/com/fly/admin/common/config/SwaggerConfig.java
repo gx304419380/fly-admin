@@ -11,7 +11,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.List;
 
-import static com.fly.admin.common.constant.CommonConstant.TOKEN_HEADER;
+import static com.fly.admin.common.constant.CommonConstant.TOKEN;
 import static java.util.Collections.singletonList;
 
 /**
@@ -26,7 +26,7 @@ public class SwaggerConfig {
     @Bean
     public Docket petApi() {
 
-        List<SecurityScheme> securitySchemes = singletonList(new ApiKey(TOKEN_HEADER, TOKEN_HEADER, "header"));
+        List<SecurityScheme> securitySchemes = singletonList(new ApiKey(TOKEN, TOKEN, "header"));
         List<SecurityContext> securityContexts = singletonList(
                 SecurityContext.builder()
                         .securityReferences(securityReferences())
@@ -53,7 +53,7 @@ public class SwaggerConfig {
         AuthorizationScope[] authorizationScopes =
                 new AuthorizationScope[]{new AuthorizationScope("global", "accessEverything")};
 
-        SecurityReference reference = new SecurityReference(TOKEN_HEADER, authorizationScopes);
+        SecurityReference reference = new SecurityReference(TOKEN, authorizationScopes);
         return singletonList(reference);
     }
 

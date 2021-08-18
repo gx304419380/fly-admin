@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fly.admin.system.mapper.GroupXmlMapper">
+
+    <select id="getByPathAndParent" resultType="com.fly.admin.system.dto.GroupDto">
+        select * , 1 as permissionType
+        from tb_group
+        where path like concat(#{path}, '%')
+        <if test="parentId != null">
+            and parent_id = #{parentId}
+        </if>
+        and deleted = 0
+        order by update_time desc
+        union all
+        select * , 0 as permissionType
+        from tb_group
+        where id in
+        <foreach collection="parentList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        <if test="parentId != null">
+            and parent_id = #{parentId}
+        </if>
+        order by update_time desc
+    </select>
+</mapper>

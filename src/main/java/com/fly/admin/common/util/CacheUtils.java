@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.fly.admin.common.constant.CommonConstant.TOKEN;
+
 /**
  * @author guoxiang
  * @version 1.0.0

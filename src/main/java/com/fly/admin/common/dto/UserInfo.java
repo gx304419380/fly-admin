@@ -1,5 +1,6 @@
 package com.fly.admin.common.dto;
 
+import com.fly.admin.system.entity.Account;
 import com.fly.admin.system.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,11 @@ public class UserInfo {
 
     private String description;
 
+    /**
+     * 所属组织id
+     */
+    private String groupId;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
@@ -42,6 +48,11 @@ public class UserInfo {
         BeanUtils.copyProperties(user, this);
         this.token = token;
         this.username = username;
+    }
+
+    public void refresh(User user, Account account) {
+        BeanUtils.copyProperties(user, this);
+        this.username = account.getUsername();
     }
 }
 

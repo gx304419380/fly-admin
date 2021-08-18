@@ -6,6 +6,7 @@ import com.fly.admin.system.dto.LoginDto;
 import com.fly.admin.system.dto.RegisterDto;
 import com.fly.admin.common.dto.UserInfo;
 import com.fly.admin.system.service.AccountService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -26,6 +27,7 @@ import static com.fly.admin.common.constant.CommonConstant.DEV;
 @RestController
 @RequestMapping("account")
 @Slf4j
+@Api(tags = "登陆注册")
 public class AccountController {
 
     @Resource
@@ -53,13 +55,13 @@ public class AccountController {
 
     @PostMapping("login")
     @ApiOperation("登录校验并返回token")
-    public Res<UserInfo> login(@Validated @RequestBody LoginDto dto) {
+    public Res<String> login(@Validated @RequestBody LoginDto dto) {
         log.info("- user login: {}", dto);
 
-        UserInfo user = accountService.login(dto);
+        String token = accountService.login(dto);
 
         log.info("- user login finish");
-        return Res.ok(user);
+        return Res.ok(token);
     }
 
 
@@ -68,10 +70,10 @@ public class AccountController {
     public String loginForTest(@Validated LoginDto dto) {
         log.info("- user login: {}", dto);
 
-        UserInfo user = accountService.login(dto);
+        String token = accountService.login(dto);
 
         log.info("- user login finish");
-        return user.getToken();
+        return token;
     }
 
 
