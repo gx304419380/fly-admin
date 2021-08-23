@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+import static com.fly.admin.common.constant.SystemErrorMessage.HAS_NO_GROUP_ERROR;
 import static com.fly.admin.common.constant.SystemErrorMessage.USER_NULL_ERROR;
 
 /**
@@ -52,8 +53,9 @@ public class GroupController {
     public Res<List<GroupDto>> getFullTree() {
         UserInfo user = UserUtils.getUserInfo();
         Assert.notNull(user, USER_NULL_ERROR);
+        Assert.hasText(user.getGroupId(), HAS_NO_GROUP_ERROR);
 
-        List<GroupDto> tree = groupService.getFullTree(user);
+        List<GroupDto> tree = groupService.getFullTree(user.getGroupId());
 
         return Res.ok(tree);
     }
@@ -64,20 +66,9 @@ public class GroupController {
     public Res<List<GroupDto>> nextLevel(@RequestParam(required = false) String parentId) {
         UserInfo user = UserUtils.getUserInfo();
         Assert.notNull(user, USER_NULL_ERROR);
+        Assert.hasText(user.getGroupId(), HAS_NO_GROUP_ERROR);
 
-        List<GroupDto> list = groupService.nextLevel(user, parentId);
-
-        return Res.ok(list);
-    }
-
-
-    @ApiOperation("查询所有group")
-    @GetMapping("location")
-    public Res<List<Group>> getLocation(@RequestParam(required = false) Long parentId) {
-        UserInfo user = UserUtils.getUserInfo();
-        Assert.notNull(user, USER_NULL_ERROR);
-
-        List<Group> list = groupService.getLocation(user, parentId);
+        List<GroupDto> list = groupService.nextLevel(user.getGroupId(), parentId);
 
         return Res.ok(list);
     }
@@ -89,22 +80,24 @@ public class GroupController {
     public Res<List<Group>> searchByName(@RequestParam String name) {
         UserInfo user = UserUtils.getUserInfo();
         Assert.notNull(user, USER_NULL_ERROR);
+        Assert.hasText(user.getGroupId(), HAS_NO_GROUP_ERROR);
 
-        List<Group> list = groupService.searchByName(user, name);
+        List<Group> list = groupService.searchByName(user.getGroupId(), name);
 
         return Res.ok(list);
     }
 
 
-    @ApiOperation("新增或修改")
+    @ApiOperation("新增或修改，加锁保障数据一致")
     @PostMapping
-    public Res<String> saveOrUpdate(@RequestBody @Validated GroupDto dto) {
+    public synchronized Res<String> saveOrUpdate(@RequestBody @Validated GroupDto dto) {
         UserInfo user = UserUtils.getUserInfo();
 
         Assert.notNull(user, USER_NULL_ERROR);
+        Assert.hasText(user.getGroupId(), HAS_NO_GROUP_ERROR);
         log.info("- saveOrUpdate Group by user: {}", user.getUsername());
 
-        groupService.saveOrUpdate(dto, user);
+        groupService.saveOrUpdate(dto, user.getGroupId(), user.getUserId());
 
         log.info("- saveOrUpdate Group finish");
         return Res.ok();
@@ -113,13 +106,14 @@ public class GroupController {
 
     @ApiOperation("根据id删除节点")
     @DeleteMapping("{id}")
-    public Res<String> deleteById(@PathVariable @NotNull Long id) {
+    public synchronized Res<String> deleteById(@PathVariable @NotNull String id) {
         UserInfo user = UserUtils.getUserInfo();
 
         Assert.notNull(user, USER_NULL_ERROR);
+        Assert.hasText(user.getGroupId(), HAS_NO_GROUP_ERROR);
         log.info("- delete Group by user: {}, id = {}", user.getUsername(), id);
 
-        groupService.deleteById(id, user);
+        groupService.deleteById(id, user.getGroupId(), user.getUserId());
         log.info("- delete Group finish");
         return Res.ok();
     }

@@ -6,7 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.beans.BeanUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.fly.admin.common.constant.CommonConstant.HAS_PERMISSION;
@@ -55,7 +57,10 @@ public class GroupDto {
 
     private List<GroupDto> children;
 
+    private Object extension;
+
     public GroupDto(Group group) {
+        BeanUtils.copyProperties(group, this);
     }
 
     public GroupDto hasPermission() {
@@ -64,5 +69,15 @@ public class GroupDto {
 
     public GroupDto noPermission() {
         return this.setPermissionType(NO_PERMISSION);
+    }
+
+    public Group convertTo() {
+        Group group = new Group();
+        BeanUtils.copyProperties(this, group);
+
+        // TODO: 2021/8/20 extension json处理
+
+
+        return group;
     }
 }

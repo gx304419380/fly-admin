@@ -24,4 +24,11 @@ public interface GroupXmlMapper {
     List<GroupDto> getByPathAndParent(@Param("path") String path,
                                       @Param("parentList") List<String> parentList,
                                       @Param("parentId") String parentId);
+
+    /**
+     * 更新节点是否会有子节点
+     *
+     * @param id    id
+     */
+    void updateGroupChildStatus(@Param("id") String id);
 }

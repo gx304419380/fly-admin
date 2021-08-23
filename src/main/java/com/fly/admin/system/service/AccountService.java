@@ -2,6 +2,7 @@ package com.fly.admin.system.service;
 
 import com.fly.admin.common.dto.UserInfo;
 import com.fly.admin.common.exception.BaseException;
+import com.fly.admin.common.util.Assert;
 import com.fly.admin.common.util.CacheUtils;
 import com.fly.admin.common.util.KeyUtils;
 import com.fly.admin.system.dto.LoginDto;
@@ -17,7 +18,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;

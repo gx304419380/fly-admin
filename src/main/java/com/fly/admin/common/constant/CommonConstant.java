@@ -20,8 +20,11 @@ public class CommonConstant {
 
 
     public static final String PATH_JOIN = "/";
-    public static final String ROOT = "root_org";
+    public static final String ROOT = "ORG_ROOT";
 
     public static final Integer HAS_PERMISSION = 1;
     public static final Integer NO_PERMISSION = 0;
+    public static final Integer NO_CHILD = 0;
+    public static final Integer HAS_CHILD = 1;
+
 }
