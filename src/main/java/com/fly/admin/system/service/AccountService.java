@@ -62,6 +62,7 @@ public class AccountService {
                 .end();
 
         Account account = accountMapper.findOne(query);
+        Assert.notNull(account, USER_NULL_ERROR);
         String salt = account.getSalt();
         String encryptPassword = account.getPassword();
 

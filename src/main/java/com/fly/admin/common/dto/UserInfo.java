@@ -9,6 +9,8 @@ import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 
+import static java.util.Objects.isNull;
+
 /**
  * @author guoxiang
  * @version 1.0.0
@@ -52,6 +54,9 @@ public class UserInfo {
 
     public void refresh(User user, Account account) {
         BeanUtils.copyProperties(user, this);
+        if (isNull(account)) {
+            return;
+        }
         this.username = account.getUsername();
     }
 }

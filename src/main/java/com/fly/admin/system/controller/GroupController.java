@@ -6,6 +6,7 @@ import com.fly.admin.common.dto.UserInfo;
 import com.fly.admin.common.util.UserUtils;
 import com.fly.admin.system.entity.Group;
 import com.fly.admin.system.service.GroupService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
@@ -29,6 +30,7 @@ import static com.fly.admin.common.constant.SystemErrorMessage.USER_NULL_ERROR;
 @RestController
 @RequestMapping("group")
 @Slf4j
+@Api(tags = "组织")
 public class GroupController {
     
     @Resource

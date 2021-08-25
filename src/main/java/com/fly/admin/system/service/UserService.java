@@ -66,12 +66,11 @@ public class UserService {
         User u = dto.convertTo();
         userMapper.updateById(u);
 
-        //更新账户
-        Account account = accountService.generateAccount(userId, dto.getUsername(), dto.getPassword());
-        accountService.updateAccount(account);
+        //获取最新的数据
+        user = userMapper.findById(userId);
 
         //更新缓存的用户数据
-        refreshCacheUser(user, account);
+        refreshCacheUser(user, null);
     }
 
 

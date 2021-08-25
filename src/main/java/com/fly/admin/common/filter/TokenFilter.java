@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fly.admin.common.dto.Res;
 import com.fly.admin.common.dto.UserInfo;
 import com.fly.admin.common.util.CacheUtils;
+import com.fly.admin.common.util.Check;
 import com.fly.admin.common.util.UserUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.*;
@@ -57,7 +57,7 @@ public class TokenFilter implements Filter {
 
         //校验token
         String token = httpRequest.getHeader(TOKEN);
-        if (StringUtils.isEmpty(token)) {
+        if (Check.isEmpty(token)) {
             setResponse(httpResponse, "请求头无token");
             return;
         }

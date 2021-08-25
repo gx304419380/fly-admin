@@ -39,9 +39,9 @@ public class UserDto {
 
     private String description;
 
-    private List<Long> roleList;
+    private List<String> roleList;
 
-    private Long groupId;
+    private String groupId;
 
     private String username;
 

@@ -33,9 +33,9 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @GetMapping("page")
+    @PostMapping("page")
     @ApiOperation("分页查询用户信息")
-    public Res<Object> page(UserCondition userCondition) {
+    public Res<Object> page(@RequestBody UserCondition userCondition) {
         return Res.ok();
     }
 

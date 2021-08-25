@@ -22,11 +22,11 @@ import java.util.*;
 import static com.fly.admin.common.constant.CommonConstant.*;
 import static com.fly.admin.common.constant.EventType.*;
 import static com.fly.admin.common.constant.SystemErrorMessage.*;
+import static com.fly.admin.common.util.Check.isEmpty;
+import static com.fly.admin.common.util.Check.notEmpty;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author guoxiang
@@ -105,7 +105,7 @@ public class GroupService {
         Group group = dto.convertTo().setUpdateUser(userId);
 
         //id not null -> update group
-        if (isNotBlank(group.getId())) {
+        if (notEmpty(group.getId())) {
             updateGroup(group, parent);
             return;
         }
@@ -255,7 +255,7 @@ public class GroupService {
      * @return              如果有权限则返回该分组
      */
     public Group hasPermission(String userGroupId, String groupId) {
-        if (isBlank(userGroupId)) {
+        if (isEmpty(userGroupId)) {
             return null;
         }
 
