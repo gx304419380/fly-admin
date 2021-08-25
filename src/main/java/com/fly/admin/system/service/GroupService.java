@@ -1,7 +1,6 @@
 package com.fly.admin.system.service;
 
 import cn.org.atool.fluent.mybatis.If;
-import com.fly.admin.common.exception.BaseException;
 import com.fly.admin.common.util.Assert;
 import com.fly.admin.system.dto.GroupDto;
 import com.fly.admin.system.entity.Group;
@@ -22,8 +21,7 @@ import java.util.*;
 import static com.fly.admin.common.constant.CommonConstant.*;
 import static com.fly.admin.common.constant.EventType.*;
 import static com.fly.admin.common.constant.SystemErrorMessage.*;
-import static com.fly.admin.common.util.Check.isEmpty;
-import static com.fly.admin.common.util.Check.notEmpty;
+import static com.fly.admin.common.util.Check.*;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -259,7 +257,7 @@ public class GroupService {
             return null;
         }
 
-        if (Objects.equals(userGroupId, groupId)) {
+        if (isEqual(userGroupId, groupId)) {
             return getById(groupId);
         }
 
@@ -420,7 +418,7 @@ public class GroupService {
             }
 
             List<GroupDto> children = list.stream()
-                    .filter(d -> Objects.equals(d.getParentId(), group.getId()))
+                    .filter(d -> isEqual(d.getParentId(), group.getId()))
                     .collect(toList());
             group.setChildren(children);
         }

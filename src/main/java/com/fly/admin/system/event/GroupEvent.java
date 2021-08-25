@@ -5,7 +5,6 @@ import com.fly.admin.system.entity.Group;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;

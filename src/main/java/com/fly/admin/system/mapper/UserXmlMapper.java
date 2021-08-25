@@ -10,5 +10,11 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserXmlMapper {
+    /**
+     * 测试查询
+     *
+     * @param name name
+     * @return  user
+     */
     User search(String name);
 }

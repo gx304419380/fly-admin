@@ -21,11 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
-import java.util.Objects;
 import java.util.UUID;
 
 import static com.fly.admin.common.constant.CommonConstant.*;
 import static com.fly.admin.common.constant.SystemErrorMessage.*;
+import static com.fly.admin.common.util.Check.isEqual;
 
 /**
  * @author guoxiang
@@ -128,7 +128,7 @@ public class AccountService {
     private String getPassword(LoginDto dto) {
 
         String activeProfile = environment.getActiveProfiles()[0];
-        boolean isDev = Objects.equals(activeProfile, DEV);
+        boolean isDev = isEqual(activeProfile, DEV);
         //如果是开发环境，则直接获取password
         if (isDev) {
             return dto.getPassword();

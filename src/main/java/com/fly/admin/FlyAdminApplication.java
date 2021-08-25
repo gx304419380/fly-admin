@@ -5,6 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
+/**
+ * @author guoxiang
+ */
 @SpringBootApplication
 @MapperScan("com.fly.admin.system.mapper")
 @ServletComponentScan
