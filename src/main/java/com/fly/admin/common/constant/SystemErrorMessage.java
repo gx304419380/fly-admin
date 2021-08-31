@@ -28,6 +28,7 @@ public class SystemErrorMessage {
 
     public static final String GROUP_NULL_ERROR = "组织节点不存在";
     public static final String GROUP_NAME_EXIST_ERROR = "组织名称已存在";
+    public static final String GROUP_NAME_NULL_ERROR = "组织名称为空";
     public static final String HAS_NO_PERMISSION_ERROR = "用户无权限";
     public static final String HAS_NO_GROUP_ERROR = "用户未关联组织";
     public static final String DELETE_ROOT_ERROR = "无法删除根节点";

@@ -35,7 +35,7 @@ public class UserController {
 
     @PostMapping("page")
     @ApiOperation("分页查询用户信息")
-    public Res<Object> page(@RequestBody UserCondition userCondition) {
+    public Res<Object> page(@RequestBody UserCondition condition) {
         return Res.ok();
     }
 

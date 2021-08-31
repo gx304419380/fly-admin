@@ -90,17 +90,16 @@ public class GroupService {
      * @param userId    用户id
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveOrUpdate(GroupDto dto, String userGroupId, String userId) {
+    public Group saveOrUpdate(GroupDto dto, String userGroupId, String userId) {
         //校验名称
         Boolean existName = existName(dto.getName(), dto.getId());
         Assert.isFalse(existName, GROUP_NAME_EXIST_ERROR);
 
-        Group group = dto.convertTo().setUpdateUser(userId);
+        Group group = dto.convertTo().setUpdateUser(userId).setUpdateTime(LocalDateTime.now());
 
         //id not null -> update group
         if (notEmpty(group.getId())) {
-            updateGroup(group, userGroupId);
-            return;
+            return updateGroup(group, userGroupId);
         }
 
         //新增需要校验父节点权限
@@ -116,10 +115,12 @@ public class GroupService {
                 .setNamePath(generatePath(name, parent.getNamePath()))
                 .setLevel(parent.getLevel() + 1)
                 .setHasChild(NO_CHILD)
-                .setCreateUser(userId);
+                .setCreateUser(userId)
+                .setCreateTime(LocalDateTime.now());
 
         groupMapper.save(group);
         publisher.publishEvent(new GroupEvent(ADD, group));
+        return group;
     }
 
 
@@ -129,7 +130,7 @@ public class GroupService {
      * @param group         group
      * @param userGroupId   用户所属分组
      */
-    private void updateGroup(Group group, String userGroupId) {
+    private Group updateGroup(Group group, String userGroupId) {
 
         //修改需要校验当前节点权限
         Group old = hasPermission(userGroupId, group.getId());
@@ -151,7 +152,6 @@ public class GroupService {
 
         group.setCreateUser(old.getCreateUser())
                 .setCreateTime(old.getCreateTime())
-                .setUpdateTime(LocalDateTime.now())
                 .setPath(path)
                 .setNamePath(namePath)
                 .setLevel(parent.getLevel() + 1);
@@ -176,13 +176,13 @@ public class GroupService {
         //如果没有移动节点，并且没有修改节点名称，则直接返回，否则需要修改子节点list
         if (oldParentId.equals(parent.getId()) && oldNamePath.equals(namePath)) {
             publisher.publishEvent(new GroupEvent(UPDATE, group, old));
-            return;
+            return group;
         }
 
         //所有子节点修改name Path level， 然后再循环中更新数据，这里不采用批量更新，因为很少会有转移节点的操作
         List<Group> children = getAllChildren(oldPath);
         if (children.isEmpty()) {
-            return;
+            return group;
         }
 
         List<Group> newChildren = new ArrayList<>(children.size());
@@ -203,6 +203,7 @@ public class GroupService {
         newChildren.add(group);
         children.add(old);
         publisher.publishEvent(new GroupEvent(UPDATE, newChildren, children));
+        return group;
     }
 
     /**
@@ -418,7 +419,7 @@ public class GroupService {
                 .deleted().eq(NOT_DELETED)
                 .type().eq(ORG)
                 .end()
-                .orderBy.updateTime().desc()
+                .orderBy.createTime().desc()
                 .end();
 
         List<GroupDto> list = groupMapper.listEntity(query)
@@ -498,7 +499,7 @@ public class GroupService {
 
         //批量更新
         GroupUpdate update = groupMapper.updater()
-                .set.deleted().is(DELETE).end()
+                .set.deleted().is(DELETED).end()
                 .where.id().in(list).end();
 
         groupMapper.updateBy(update);

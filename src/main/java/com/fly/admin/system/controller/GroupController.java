@@ -93,17 +93,17 @@ public class GroupController {
 
     @ApiOperation("新增或修改，加锁保障数据一致")
     @PostMapping
-    public synchronized Res<String> saveOrUpdate(@RequestBody @Validated GroupDto dto) {
+    public synchronized Res<Group> saveOrUpdate(@RequestBody @Validated GroupDto dto) {
         UserInfo user = UserUtils.getUserInfo();
 
         Assert.notNull(user, USER_NULL_ERROR);
         Assert.hasText(user.getGroupId(), HAS_NO_GROUP_ERROR);
         log.info("- saveOrUpdate Group by user: {}", user.getUsername());
 
-        groupService.saveOrUpdate(dto, user.getGroupId(), user.getUserId());
+        Group group = groupService.saveOrUpdate(dto, user.getGroupId(), user.getUserId());
 
         log.info("- saveOrUpdate Group finish");
-        return Res.ok();
+        return Res.ok(group);
     }
 
 

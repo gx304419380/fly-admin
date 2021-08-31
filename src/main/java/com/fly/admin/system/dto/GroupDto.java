@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.fly.admin.common.constant.CommonConstant.HAS_PERMISSION;
 import static com.fly.admin.common.constant.CommonConstant.NO_PERMISSION;
+import static com.fly.admin.common.constant.SystemErrorMessage.GROUP_NAME_NULL_ERROR;
 
 /**
  * @author guoxiang
@@ -37,6 +39,7 @@ public class GroupDto {
      * 分组名称
      */
     @ApiModelProperty(value = "名称")
+    @NotBlank(message = GROUP_NAME_NULL_ERROR)
     private String name;
 
     private String namePath;
