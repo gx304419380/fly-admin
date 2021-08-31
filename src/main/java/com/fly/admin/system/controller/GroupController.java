@@ -40,13 +40,14 @@ public class GroupController {
 
     @ApiOperation("根据id查询信息")
     @GetMapping("{id}")
-    public Res<Group> getGroup(@PathVariable String id) {
+    public Res<GroupDto> getGroup(@PathVariable String id) {
         UserInfo user = UserUtils.getUserInfo();
         Assert.notNull(user, USER_NULL_ERROR);
 
         Group group = groupService.getById(id);
+        GroupDto dto = new GroupDto(group);
 
-        return Res.ok(group);
+        return Res.ok(dto);
     }
 
 

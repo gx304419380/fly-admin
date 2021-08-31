@@ -6,6 +6,7 @@ import cn.org.atool.fluent.mybatis.base.IEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -32,6 +33,8 @@ public class Group implements IEntity {
 
     private String namePath;
 
+    private String description;
+
     /**
      * 类型，例如 org
      */
@@ -53,4 +56,8 @@ public class Group implements IEntity {
 
     private String extension;
 
+    @Override
+    public Serializable findPk() {
+        return id;
+    }
 }

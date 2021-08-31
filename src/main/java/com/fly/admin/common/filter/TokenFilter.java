@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 
 import static com.fly.admin.common.constant.CommonConstant.TOKEN;
 import static com.fly.admin.common.constant.CommonConstant.TOKEN_CACHE;
+import static com.fly.admin.common.dto.Res.USER_LOGOUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -49,8 +50,8 @@ public class TokenFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         //白名单
-        String uri = httpRequest.getRequestURI();
-        if (whiteList(uri)) {
+        String servletPath = httpRequest.getServletPath();
+        if (whiteList(servletPath)) {
             chain.doFilter(request, response);
             return;
         }
@@ -101,7 +102,7 @@ public class TokenFilter implements Filter {
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
 
-        Res<Object> res = Res.fail(message);
+        Res<Object> res = Res.fail(USER_LOGOUT, message);
         String json = objectMapper.writeValueAsString(res);
 
         response.getWriter().write(json);

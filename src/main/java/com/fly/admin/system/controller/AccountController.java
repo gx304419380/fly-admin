@@ -1,7 +1,9 @@
 package com.fly.admin.system.controller;
 
 import com.fly.admin.common.dto.Res;
+import com.fly.admin.common.util.Assert;
 import com.fly.admin.common.util.KeyUtils;
+import com.fly.admin.common.util.UserUtils;
 import com.fly.admin.system.dto.LoginDto;
 import com.fly.admin.system.dto.RegisterDto;
 import com.fly.admin.common.dto.UserInfo;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 import static com.fly.admin.common.constant.CommonConstant.DEV;
+import static com.fly.admin.common.constant.SystemErrorMessage.USER_NOT_LOGIN;
+import static com.fly.admin.common.util.Check.isEmpty;
 
 /**
  * 账号登录登出注册
@@ -79,7 +83,7 @@ public class AccountController {
 
     @PostMapping("logout")
     @ApiOperation("登出")
-    public Res<UserInfo> logout(@RequestHeader String token) {
+    public Res<UserInfo> logout(@RequestParam String token) {
         log.info("- user logout: {}", token);
 
         accountService.logout(token);

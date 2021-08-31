@@ -11,7 +11,7 @@
     </update>
 
     <select id="getByPathAndParent" resultType="com.fly.admin.system.dto.GroupDto">
-        select * , 1 as permissionType
+        select id, parent_id, path, name, name_path, level, has_child, type, 1 as permissionType
         from tb_group
         where path like concat(#{path}, '%')
         <if test="parentId != null">
@@ -20,7 +20,7 @@
         and deleted = 0
         order by update_time desc
         union all
-        select * , 0 as permissionType
+        select id, parent_id, path, name, name_path, level, has_child, type, 0 as permissionType
         from tb_group
         where id in
         <foreach collection="parentList" item="id" separator="," open="(" close=")">

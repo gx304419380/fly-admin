@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.fly.admin.common.constant.CommonConstant.*;
@@ -90,23 +91,22 @@ public class GroupService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(GroupDto dto, String userGroupId, String userId) {
-        //校验权限
-        String parentId = dto.getParentId();
-
         //校验名称
         Boolean existName = existName(dto.getName(), dto.getId());
         Assert.isFalse(existName, GROUP_NAME_EXIST_ERROR);
-
-        Group parent = hasPermission(userGroupId, parentId);
-        Assert.notNull(parent, HAS_NO_PERMISSION_ERROR);
 
         Group group = dto.convertTo().setUpdateUser(userId);
 
         //id not null -> update group
         if (notEmpty(group.getId())) {
-            updateGroup(group, parent);
+            updateGroup(group, userGroupId);
             return;
         }
+
+        //新增需要校验父节点权限
+        String parentId = dto.getParentId();
+        Group parent = hasPermission(userGroupId, parentId);
+        Assert.notNull(parent, HAS_NO_PERMISSION_ERROR);
 
         //新增分组
         String id = UUID.randomUUID().toString();
@@ -118,7 +118,7 @@ public class GroupService {
                 .setHasChild(NO_CHILD)
                 .setCreateUser(userId);
 
-        groupMapper.insert(group);
+        groupMapper.save(group);
         publisher.publishEvent(new GroupEvent(ADD, group));
     }
 
@@ -126,23 +126,32 @@ public class GroupService {
     /**
      * 更新分组
      *
-     * @param group     group
-     * @param parent    父节点
+     * @param group         group
+     * @param userGroupId   用户所属分组
      */
-    private void updateGroup(Group group, Group parent) {
+    private void updateGroup(Group group, String userGroupId) {
+
+        //修改需要校验当前节点权限
+        Group old = hasPermission(userGroupId, group.getId());
+        Assert.notNull(old, HAS_NO_PERMISSION_ERROR);
+
+        //获取父节点
+        String parentId = group.getParentId();
+        Group parent = ROOT_PARENT.equals(parentId) ? generateRootParent() : getById(parentId);
+
         String id = group.getId();
         String name = group.getName();
 
-        Group old = getById(id);
         String oldPath = old.getPath();
         String oldNamePath = old.getNamePath();
         String oldParentId = old.getParentId();
 
         String path = generatePath(id, parent.getPath());
-        String namePath = generatePath(name, parent.getPath());
+        String namePath = generatePath(name, parent.getNamePath());
 
         group.setCreateUser(old.getCreateUser())
                 .setCreateTime(old.getCreateTime())
+                .setUpdateTime(LocalDateTime.now())
                 .setPath(path)
                 .setNamePath(namePath)
                 .setLevel(parent.getLevel() + 1);
@@ -194,6 +203,21 @@ public class GroupService {
         newChildren.add(group);
         children.add(old);
         publisher.publishEvent(new GroupEvent(UPDATE, newChildren, children));
+    }
+
+    /**
+     * 生成根节点的父节点，虚拟节点
+     *
+     * @return  虚拟节点
+     */
+    private Group generateRootParent() {
+        return new Group()
+                .setDeleted(NOT_DELETED)
+                .setLevel(0)
+                .setPath(PATH_JOIN)
+                .setNamePath(PATH_JOIN)
+                .setId(ROOT_PARENT)
+                .setHasChild(HAS_CHILD);
     }
 
 
@@ -388,8 +412,11 @@ public class GroupService {
      */
     private List<GroupDto> getFullTree() {
         GroupQuery query = groupMapper.query()
+                .select.id().name().parentId().path().namePath().type().level().hasChild()
+                .end()
                 .where()
                 .deleted().eq(NOT_DELETED)
+                .type().eq(ORG)
                 .end()
                 .orderBy.updateTime().desc()
                 .end();

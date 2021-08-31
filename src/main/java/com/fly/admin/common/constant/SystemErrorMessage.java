@@ -16,6 +16,7 @@ public class SystemErrorMessage {
     public static final String LOGIN_ERROR = "用户登录失败，请检查用户名和密码";
 
     public static final String USERNAME_BLANK_ERROR = "用户名不能为空";
+    public static final String USER_NOT_LOGIN = "用户未登录";
     public static final String USER_ID_NULL_ERROR = "用户ID能为空";
     public static final String USER_NULL_ERROR = "用户不存在";
     public static final String USERNAME_EXIST_ERROR = "用户名已存在";

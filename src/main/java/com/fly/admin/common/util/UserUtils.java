@@ -3,6 +3,8 @@ package com.fly.admin.common.util;
 import com.fly.admin.common.dto.UserInfo;
 import lombok.experimental.UtilityClass;
 
+import static com.fly.admin.common.util.Check.notNull;
+
 /**
  * @author guoxiang
  * @version 1.0.0
@@ -23,5 +25,15 @@ public class UserUtils {
 
     public static UserInfo getUserInfo() {
         return USER_HOLDER.get();
+    }
+
+    public static String getToken() {
+        UserInfo userInfo = USER_HOLDER.get();
+
+        if (notNull(userInfo)) {
+            return userInfo.getToken();
+        }
+
+        return null;
     }
 }

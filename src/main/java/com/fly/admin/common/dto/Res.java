@@ -18,9 +18,10 @@ public class Res<T> {
 
     public static final Integer SUCCESS_CODE = 0;
     public static final Integer FAIL_CODE = 1;
+    public static final Integer USER_LOGOUT = 2;
 
     private Integer code;
-    private String msg;
+    private String message;
     private T data;
 
 
@@ -32,8 +33,11 @@ public class Res<T> {
         return new Res<>(SUCCESS_CODE, null, null);
     }
 
-    public static <T> Res<T> fail(String msg) {
-        return new Res<>(FAIL_CODE, msg, null);
+    public static <T> Res<T> fail(String message) {
+        return new Res<>(FAIL_CODE, message, null);
     }
 
+    public static <T> Res<T> fail(Integer code, String message) {
+        return new Res<>(code, message, null);
+    }
 }

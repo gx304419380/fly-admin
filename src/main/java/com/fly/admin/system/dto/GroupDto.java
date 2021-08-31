@@ -59,6 +59,8 @@ public class GroupDto {
 
     private Object extension;
 
+    private String description;
+
     public GroupDto(Group group) {
         BeanUtils.copyProperties(group, this);
     }
