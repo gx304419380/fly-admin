@@ -87,7 +87,9 @@ public class TokenFilter implements Filter {
      * @return      是否为白名单
      */
     private boolean whiteList(String uri) {
-        return uri.startsWith(SWAGGER) || uri.startsWith(SWAGGER_JSON) || uri.startsWith(ACCOUNT);
+        return uri.startsWith(SWAGGER)
+                || uri.startsWith(SWAGGER_JSON)
+                || uri.startsWith(ACCOUNT);
     }
 
 

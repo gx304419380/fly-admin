@@ -1,12 +1,17 @@
 package com.fly.admin.system.controller;
 
+import com.fly.admin.common.dto.Res;
+import com.fly.admin.system.dto.AppDto;
 import com.fly.admin.system.service.MenuService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author guoxiang

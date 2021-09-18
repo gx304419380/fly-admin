@@ -4,6 +4,7 @@ import com.fly.admin.common.dto.Res;
 import com.fly.admin.common.util.Assert;
 import com.fly.admin.common.util.KeyUtils;
 import com.fly.admin.common.util.UserUtils;
+import com.fly.admin.system.dto.AppDto;
 import com.fly.admin.system.dto.LoginDto;
 import com.fly.admin.system.dto.RegisterDto;
 import com.fly.admin.common.dto.UserInfo;
@@ -16,6 +17,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
+import java.util.Collections;
+import java.util.List;
 
 import static com.fly.admin.common.constant.CommonConstant.DEV;
 import static com.fly.admin.common.constant.SystemErrorMessage.USER_NOT_LOGIN;
@@ -90,6 +94,17 @@ public class AccountController {
 
         log.info("- user logout finish");
         return Res.ok();
+    }
+
+    @GetMapping("app")
+    @ApiOperation("获取微前端应用列表")
+    public Res<List<AppDto>> getAppList() {
+        AppDto app = new AppDto()
+                .setName("app-vue-admin")
+                .setEntry("http://localhost:8090")
+                .setContainer("#appContainer")
+                .setActiveRule("/micro/vue");
+        return Res.ok(Collections.singletonList(app));
     }
 
 }
